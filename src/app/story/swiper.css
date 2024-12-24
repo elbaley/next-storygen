@@ -1,0 +1,34 @@
+#swiper-container {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.custom-pagination-container {
+  padding: 0.5rem 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-pagination {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  width: 100%;
+  height: 10px;
+}
+
+.custom-bullet {
+  @apply bg-gray-500/50 !mx-0 rounded-full flex-1;
+  height: 0.25rem;
+  transition: background-color 0.3s;
+  opacity: 1;
+}
+
+.custom-bullet.swiper-pagination-bullet-active {
+  background-color: white;
+}
