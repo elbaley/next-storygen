@@ -104,7 +104,7 @@ export default function Page() {
   ];
 
   return (
-    <main className="w-full  h-dvh flex justify-center  bg-red-500/10">
+    <main className="w-full  h-dvh flex justify-center  bg-black">
       <Stories stories={demoStories} />
     </main>
   );
