@@ -1,26 +1,101 @@
 "use client";
 
-import { Stage, Layer, Text, Group } from "react-konva";
+import { Stage, Layer, Text, Group, Label, Tag } from "react-konva";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import { useState, useRef } from "react";
+import { Baseline, Save, Trash, Type } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
+  const backgroundPresets = [
+    {
+      id: 0,
+      background: "black",
+      color: "white",
+    },
+    {
+      id: 1,
+      background: "white",
+      color: "black",
+    },
+    {
+      id: 2,
+      background: "transparent",
+      color: "black",
+    },
+  ] as const;
+
+  const handleCyclePreset = () => {
+    if (editingId !== null) {
+      setTexts((prevTexts) =>
+        prevTexts.map((text) => {
+          if (text.id === editingId) {
+            const currentPresetIndex = backgroundPresets.findIndex(
+              (preset) =>
+                preset.background === text.background &&
+                preset.color === text.color,
+            );
+            const nextPresetIndex =
+              (currentPresetIndex + 1) % backgroundPresets.length;
+            return {
+              ...text,
+              background: backgroundPresets[nextPresetIndex].background,
+              color: backgroundPresets[nextPresetIndex].color,
+            };
+          }
+          return text;
+        }),
+      );
+    }
+  };
+
   const [texts, setTexts] = useState([
-    { id: 1, text: "Hello World", x: 0, y: 0, fontSize: 24 },
-    { id: 2, text: "Konva Text", x: 100, y: 150, fontSize: 18 },
+    {
+      id: 1,
+      text: "Hello World",
+      x: 0,
+      y: 0,
+      fontSize: 24,
+      background: "black",
+      color: "white",
+    },
+    {
+      id: 2,
+      text: "Konva Text",
+      x: 100,
+      y: BASE_HEIGHT - 35,
+      fontSize: 18,
+      background: "black",
+      color: "white",
+    },
   ]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleAddText = () => {
+    const id = Date.now();
     setTexts([
       ...texts,
-      { id: Date.now(), text: "New Text", x: 20, y: 20, fontSize: 20 },
+      {
+        id,
+        text: "Text",
+        x: BASE_WIDTH / 2.5,
+        y: BASE_HEIGHT / 2,
+        fontSize: 20,
+        background: "black",
+        color: "white",
+      },
     ]);
-  };
 
-  const handleDeleteText = (id: number) => {
-    setTexts(texts.filter((text) => text.id !== id));
+    setEditingId(id);
+    if (inputRef.current) {
+      inputRef.current.value = "Text";
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
   };
 
   const handleEditText = (id: number) => {
@@ -29,6 +104,10 @@ export default function Page() {
     if (text && inputRef.current) {
       inputRef.current.value = text.text;
       inputRef.current.focus();
+
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -42,77 +121,111 @@ export default function Page() {
     }
   };
 
+  const handleDeleteText = () => {
+    if (editingId !== null) {
+      setTexts(texts.filter((t) => t.id !== editingId));
+      setEditingId(null);
+    }
+  };
+
   return (
-    <main className="w-full">
-      <h1>Konva</h1>
-      <button onClick={handleAddText}>Add Text</button>
-      <div
-        style={{
-          width: "100%",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "#f0f0f0",
-        }}
-      >
+    <main className="w-full pt-4">
+      <div className="w-full flex items-center justify-center">
         <div
+          className="bg-cover relative border border-black"
           style={{
             width: `${BASE_WIDTH}px`,
             height: `${BASE_HEIGHT}px`,
-            border: "1px solid black",
-            position: "relative",
+            backgroundImage: "url(https://picsum.photos/id/0/1080/1920)",
           }}
         >
-          {/* Konva Sahnesi */}
-          <Stage width={BASE_WIDTH} height={BASE_HEIGHT}>
+          <Stage
+            onClick={() => {
+              if (editingId !== null) {
+                setEditingId(null);
+              }
+            }}
+            width={BASE_WIDTH}
+            height={BASE_HEIGHT}
+          >
             <Layer>
               {texts.map((t) => (
                 <Group
                   key={t.id}
+                  x={t.x}
+                  y={t.y}
                   draggable
                   onDragEnd={(e) => {
-                    console.log(e.target.x(), e.target.y());
+                    const { x, y } = e.currentTarget.getAbsolutePosition();
+                    setTexts(
+                      texts.map((text) =>
+                        text.id === t.id
+                          ? {
+                              ...text,
+                              x,
+                              y,
+                            }
+                          : text,
+                      ),
+                    );
                   }}
                 >
-                  <Text
-                    text={t.text}
-                    x={t.x}
-                    y={t.y}
-                    fontSize={t.fontSize}
-                    fill="black"
-                    onDblClick={() => handleEditText(t.id)}
-                  />
-                  <Text
-                    text="✖"
-                    x={t.x + 80}
-                    y={t.y - 10}
-                    fontSize={18}
-                    fill="red"
-                    onClick={() => handleDeleteText(t.id)}
-                  />
+                  <Label>
+                    <Tag cornerRadius={4} fill={t.background} />
+                    <Text
+                      text={t.text}
+                      fontFamily="Inter"
+                      fontVariant="bold"
+                      padding={6}
+                      shadowBlur={t.background !== "transparent" ? 0 : 0}
+                      fontSize={t.fontSize}
+                      fill={t.color}
+                      onDblClick={() => {
+                        handleEditText(t.id);
+                      }}
+                    />
+                  </Label>
                 </Group>
               ))}
             </Layer>
           </Stage>
-          {editingId !== null && (
-            <input
-              ref={inputRef}
-              type="text"
-              className="text-foreground"
-              style={{
-                position: "absolute",
-                top: `${texts.find((t) => t.id === editingId)?.y || 0}px`,
-                left: `${texts.find((t) => t.id === editingId)?.x || 0}px`,
-                zIndex: 10,
-                fontSize: "16px",
-              }}
-              onBlur={handleUpdateText}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleUpdateText();
-              }}
-            />
-          )}
+        </div>
+      </div>
+
+      <div className="flex justify-center w-full pt-4">
+        <div className="py-2 px-3  shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)] rounded-lg min-w-96 flex gap-2">
+          <button
+            onClick={handleAddText}
+            className="hover:bg-orange-200 p-2 rounded-md"
+          >
+            <Type size={16} />
+          </button>
+          <Separator orientation="vertical" />
+          <div className={cn("flex gap-2", editingId === null && "hidden")}>
+            <button
+              onClick={handleCyclePreset}
+              className={cn(
+                "p-2 rounded-md",
+                texts.find((t) => t.id === editingId)?.background !==
+                  "transparent" && "outline outline-black ",
+              )}
+            >
+              <Baseline size={16} />
+            </button>
+            <Input tabIndex={0} className="h-8" ref={inputRef} />
+            <button
+              onClick={handleUpdateText}
+              className="hover:bg-orange-200 p-2 rounded-md"
+            >
+              <Save size={16} />
+            </button>
+            <button
+              onClick={handleDeleteText}
+              className="hover:bg-orange-200 p-2 rounded-md"
+            >
+              <Trash size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </main>
