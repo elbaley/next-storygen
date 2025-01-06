@@ -3,10 +3,12 @@
 import { Stage, Layer, Text, Group, Label, Tag } from "react-konva";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import { useState, useRef } from "react";
-import { Baseline, Save, Trash, Type } from "lucide-react";
+import { Baseline, Menu, Save, Trash, Type } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Popover } from "@/components/ui/popover";
+import { PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 
 export default function Page() {
   const backgroundPresets = [
@@ -130,6 +132,20 @@ export default function Page() {
 
   return (
     <main className="w-full pt-4">
+      <Popover>
+        <PopoverTrigger asChild>
+          <button className="bg-zinc-200 ml-4 hover:bg-orange-200 p-3 rounded-sm ">
+            <Menu size={16} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          side="bottom"
+          className="rounded-sm p-2 ml-4 mt-2 shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)]"
+        >
+          <div>Background</div>
+        </PopoverContent>
+      </Popover>
+
       <div className="w-full flex items-center justify-center">
         <div
           className="bg-cover relative border border-black"
@@ -192,9 +208,10 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="flex justify-center w-full pt-4">
+      <div className="flex justify-center w-full pt-4 gap-4 items-center">
         <div className="py-2 px-3  shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)] rounded-lg min-w-96 flex gap-2">
           <button
+            disabled={editingId !== null}
             onClick={handleAddText}
             className="hover:bg-orange-200 p-2 rounded-md"
           >
