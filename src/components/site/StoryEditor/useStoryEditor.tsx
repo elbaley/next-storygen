@@ -2,33 +2,42 @@
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import { useState, useRef } from "react";
 import { nanoid } from "nanoid";
-import { Story } from "./StoryEditor.types";
+import { Story, StoryText } from "./StoryEditor.types";
 
 export const useStoryEditor = () => {
   const [stories, setStories] = useState<Story[]>([
     {
       id: "1",
-      backgroundImage: "https://picsum.photos/id/721/1080/1920?blur=10",
-      texts: [
-        {
-          id: "1",
-          text: "Hello World",
-          x: 0,
-          y: 0,
-          fontSize: 24,
-          background: "black",
-          color: "white",
-        },
-        {
-          id: "2",
-          text: "Story 1 Text",
-          x: 100,
-          y: BASE_HEIGHT - 35,
-          fontSize: 18,
-          background: "black",
-          color: "white",
-        },
-      ],
+      background: {
+        type: "image",
+        value: "https://picsum.photos/id/721/1080/1920?blur=10",
+      },
+      components: {
+        texts: [
+          {
+            id: "1",
+            text: "Hello World",
+            position: {
+              x: 0,
+              y: 0,
+            },
+            fontSize: 24,
+            background: "black",
+            color: "white",
+          },
+          {
+            id: "2",
+            text: "Story 1 Text",
+            position: {
+              x: 100,
+              y: BASE_HEIGHT - 35,
+            },
+            fontSize: 18,
+            background: "black",
+            color: "white",
+          },
+        ],
+      },
     },
   ]);
   const [activeStoryIndex, setActiveStoryIndex] = useState(0);
@@ -41,8 +50,11 @@ export const useStoryEditor = () => {
       ...stories,
       {
         id: nanoid(19),
-        backgroundImage: "https://picsum.photos/id/721/1080/1920?blur=10",
-        texts: [],
+        background: {
+          type: "image",
+          value: "https://picsum.photos/id/721/1080/1920?blur=10",
+        },
+        components: {},
       },
     ]);
     setActiveStoryIndex(stories.length);
@@ -73,23 +85,26 @@ export const useStoryEditor = () => {
           if (index === activeStoryIndex) {
             return {
               ...story,
-              texts: story.texts.map((text) => {
-                if (text.id === editingId) {
-                  const currentPresetIndex = backgroundPresets.findIndex(
-                    (preset) =>
-                      preset.background === text.background &&
-                      preset.color === text.color,
-                  );
-                  const nextPresetIndex =
-                    (currentPresetIndex + 1) % backgroundPresets.length;
-                  return {
-                    ...text,
-                    background: backgroundPresets[nextPresetIndex].background,
-                    color: backgroundPresets[nextPresetIndex].color,
-                  };
-                }
-                return text;
-              }),
+              components: {
+                ...story.components,
+                texts: story.components.texts?.map((text) => {
+                  if (text.id === editingId) {
+                    const currentPresetIndex = backgroundPresets.findIndex(
+                      (preset) =>
+                        preset.background === text.background &&
+                        preset.color === text.color,
+                    );
+                    const nextPresetIndex =
+                      (currentPresetIndex + 1) % backgroundPresets.length;
+                    return {
+                      ...text,
+                      background: backgroundPresets[nextPresetIndex].background,
+                      color: backgroundPresets[nextPresetIndex].color,
+                    };
+                  }
+                  return text;
+                }),
+              },
             };
           }
           return story;
@@ -112,8 +127,10 @@ export const useStoryEditor = () => {
           if (index === activeStoryIndex) {
             return {
               ...story,
-              backgroundImage: url,
-              background: undefined,
+              background: {
+                type: "image",
+                value: url,
+              },
             };
           }
           return story;
@@ -124,24 +141,37 @@ export const useStoryEditor = () => {
 
   const handleAddText = () => {
     const id = nanoid(19);
-    const newText = {
+    const newText: StoryText = {
       id,
       text: "Text",
-      x: BASE_WIDTH / 2.5,
-      y: BASE_HEIGHT / 2,
+      position: {
+        x: BASE_WIDTH / 2.5,
+        y: BASE_HEIGHT / 2,
+      },
       fontSize: 20,
       background: "black",
       color: "white",
     };
 
     setStories(
-      stories.map((story, index) =>
-        index === activeStoryIndex
-          ? { ...story, texts: [...story.texts, newText] }
-          : story,
-      ),
-    );
+      stories.map((story, index) => {
+        if (index !== activeStoryIndex) {
+          return story;
+        }
 
+        const updatedTexts = story.components.texts
+          ? [...story.components.texts, newText]
+          : [newText];
+
+        return {
+          ...story,
+          components: {
+            ...story.components,
+            texts: updatedTexts,
+          },
+        };
+      }),
+    );
     setEditingId(id);
     if (inputRef.current) {
       inputRef.current.value = "Text";
@@ -153,7 +183,7 @@ export const useStoryEditor = () => {
 
   const handleEditText = (id: string) => {
     setEditingId(id);
-    const text = currentStory.texts.find((t) => t.id === id);
+    const text = currentStory.components.texts?.find((t) => t.id === id);
     if (text && inputRef.current) {
       inputRef.current.value = text.text;
       inputRef.current.focus();
@@ -172,9 +202,11 @@ export const useStoryEditor = () => {
           index === activeStoryIndex
             ? {
                 ...story,
-                texts: story.texts.map((t) =>
-                  t.id === editingId ? { ...t, text: newText } : t,
-                ),
+                components: {
+                  texts: story.components.texts?.map((t) =>
+                    t.id === editingId ? { ...t, text: newText } : t,
+                  ),
+                },
               }
             : story,
         ),
@@ -191,7 +223,11 @@ export const useStoryEditor = () => {
           index === activeStoryIndex
             ? {
                 ...story,
-                texts: story.texts.filter((t) => t.id !== editingId),
+                components: {
+                  texts: story.components.texts?.filter(
+                    (t) => t.id !== editingId,
+                  ),
+                },
               }
             : story,
         ),

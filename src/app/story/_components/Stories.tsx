@@ -8,31 +8,13 @@ import "./swiper.css";
 import { Pagination } from "swiper/modules";
 import { PrevNextTapAreas } from "./PrevNextTapAreas";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
-
-export type TStories = Array<{
-  id: number;
-  background: {
-    type: "color" | "image";
-    value: string;
-  };
-  components: Array<{
-    type: "Text" | "Link";
-    id: string;
-    content: string;
-    style: {
-      color: string;
-      fontSize?: string;
-      backgroundColor?: string;
-      width?: string;
-      height?: string;
-    };
-    position: iPosition;
-    href?: string;
-  }>;
-}>;
+import {
+  type Position,
+  type Story,
+} from "@/components/site/StoryEditor/StoryEditor.types";
 
 type StoriesProps = {
-  stories: TStories;
+  stories: Story[];
 };
 export const Stories = ({ stories }: StoriesProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -63,7 +45,6 @@ export const Stories = ({ stories }: StoriesProps) => {
         >
           <div className="custom-pagination"></div>
         </div>
-
         {stories.map((story) => (
           <SwiperSlide
             key={story.id}
@@ -75,12 +56,54 @@ export const Stories = ({ stories }: StoriesProps) => {
                 background: `white`,
               }),
             }}
-            className={`text-foreground isolate relative  !bg-cover`}
+            className={`text-foreground isolate relative !bg-cover`}
           >
             <PrevNextTapAreas />
             <div className="slider-container p-4 [&_>*]z-[9] h-full mt-8 relative">
-              {story.components.map((component) => {
-                const { type, id, content, style, position, href } = component;
+              {/* Render Text Components */}
+              {story.components.texts?.map((text) => {
+                const {
+                  id,
+                  text: content,
+                  position,
+                  fontSize,
+                  background,
+                  color,
+                } = text;
+                const { top, left } = calculatePosition(
+                  position,
+                  containerRef.current?.clientWidth ?? BASE_WIDTH,
+                  containerRef.current?.clientHeight ?? BASE_HEIGHT,
+                );
+
+                return (
+                  <span
+                    key={id}
+                    style={{
+                      position: "absolute",
+                      top,
+                      left,
+                      fontSize,
+                      backgroundColor: background,
+                      color,
+                    }}
+                  >
+                    {content}
+                  </span>
+                );
+              })}
+
+              {/* Render Link Components */}
+              {story.components.links?.map((link) => {
+                const {
+                  id,
+                  text: content,
+                  href,
+                  position,
+                  fontSize,
+                  background,
+                  color,
+                } = link;
 
                 const { top, left } = calculatePosition(
                   position,
@@ -88,42 +111,25 @@ export const Stories = ({ stories }: StoriesProps) => {
                   containerRef.current?.clientHeight ?? BASE_HEIGHT,
                 );
 
-                switch (type) {
-                  case "Text":
-                    return (
-                      <span
-                        key={id}
-                        style={{
-                          ...style,
-                          position: "absolute",
-                          top,
-                          left,
-                        }}
-                      >
-                        {content}
-                      </span>
-                    );
-                  case "Link":
-                    return (
-                      <button
-                        key={id}
-                        className="z-10 active:opacity-90"
-                        style={{
-                          ...style,
-                          position: "absolute",
-                          top,
-                          left,
-                        }}
-                        onClick={() => {
-                          window.open(href, "_blank");
-                        }}
-                      >
-                        {content}
-                      </button>
-                    );
-                  default:
-                    return null;
-                }
+                return (
+                  <button
+                    key={id}
+                    className="z-10 active:opacity-90"
+                    style={{
+                      position: "absolute",
+                      top,
+                      left,
+                      fontSize,
+                      backgroundColor: background,
+                      color,
+                    }}
+                    onClick={() => {
+                      window.open(href, "_blank");
+                    }}
+                  >
+                    {content}
+                  </button>
+                );
               })}
             </div>
           </SwiperSlide>
@@ -133,14 +139,8 @@ export const Stories = ({ stories }: StoriesProps) => {
   );
 };
 
-export type iPosition = {
-  x: number;
-  y: number;
-};
-
 const calculatePosition = (
-  position: iPosition,
-
+  position: Position,
   containerWidth?: number,
   containerHeight?: number,
 ) => {

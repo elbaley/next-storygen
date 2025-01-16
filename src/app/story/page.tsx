@@ -1,105 +1,99 @@
 "use client";
 
-import { Stories, TStories } from "./_components/Stories";
+import type { Story } from "@/components/site/StoryEditor/StoryEditor.types";
+import { Stories } from "./_components/Stories";
 
 export default function Page() {
-  const demoStories: TStories = [
+  const demoStories: Story[] = [
     {
-      id: 1,
+      id: "1",
       background: {
         type: "image",
         value: "https://picsum.photos/id/0/1080/1920",
       },
-      components: [
-        {
-          type: "Text",
-          id: "text-1",
-          content: "Slide 1",
-          style: {
+      components: {
+        texts: [
+          {
+            id: "text-1",
+            text: "Slide 1",
+            background: "black",
             color: "white",
-            fontSize: "20px",
+            fontSize: 20,
+            position: { x: 100, y: 200 },
           },
-          position: { x: 100, y: 200 },
-        },
-        {
-          type: "Link",
-          id: "link-1",
-          content: "SELAM",
-          style: {
-            backgroundColor: "red",
+        ],
+        links: [
+          {
+            id: "link-1",
+            text: "SELAM",
+            href: "#",
+            fontSize: 16,
+            background: "red",
             color: "white",
-            width: "100px",
-            height: "50px",
+            position: { x: 0, y: 10 },
           },
-          href: "#",
-          position: { x: 0, y: 10 },
-        },
-      ],
+        ],
+      },
     },
     {
-      id: 2,
+      id: "2",
       background: {
         type: "image",
         value: "https://picsum.photos/id/169/1080/1920",
       },
-      components: [
-        {
-          type: "Text",
-          id: "text-2",
-          content: "Another Slide",
-          style: {
-            color: "blue",
-            fontSize: "18px",
-          },
-          position: { x: 50, y: 150 },
-        },
-        {
-          type: "Link",
-          id: "link-2",
-          content: "Click Me",
-          style: {
-            backgroundColor: "green",
+      components: {
+        texts: [
+          {
+            id: "text-1",
+            text: "Slide 2",
+            background: "black",
             color: "white",
-            width: "80px",
-            height: "40px",
+            fontSize: 20,
+            position: { x: 100, y: 200 },
           },
-          href: "#",
-          position: { x: 138, y: 0 },
-        },
-      ],
+        ],
+        links: [
+          {
+            id: "link-2",
+            text: "SELAM 2",
+            href: "#",
+            fontSize: 16,
+            background: "red",
+            color: "white",
+            position: { x: 0, y: 10 },
+          },
+        ],
+      },
     },
     {
-      id: 3,
+      id: "3",
       background: {
         type: "image",
-        // value: "white",
         value: "https://picsum.photos/id/318/1080/1920",
       },
-      components: [
-        {
-          type: "Text",
-          id: "text-4",
-          content: "Slide 3",
-          style: {
-            color: "red",
-            fontSize: "20px",
-          },
-          position: { x: 100, y: 200 },
-        },
-        {
-          type: "Link",
-          id: "link-1",
-          content: "SELAM -3",
-          style: {
-            backgroundColor: "blue",
+      components: {
+        texts: [
+          {
+            id: "text-3",
+            text: "Slide 3",
+            background: "black",
             color: "white",
-            width: "100px",
-            height: "50px",
+            fontSize: 20,
+            position: { x: 100, y: 200 },
           },
-          href: "#",
-          position: { x: 0, y: 300 },
-        },
-      ],
+        ],
+        links: [
+          {
+            id: "link-3",
+            text: "SELAM 3",
+            href: "#",
+            fontSize: 16,
+            background: "red",
+            color: "white",
+            position: { x: 0, y: 10 },
+          },
+        ],
+      },
     },
   ];
 

@@ -66,11 +66,11 @@ export const StoryEditor = () => {
           style={{
             width: `${BASE_WIDTH}px`,
             height: `${BASE_HEIGHT}px`,
-            ...(currentStory.background && {
-              background: currentStory.background,
+            ...(currentStory.background.type === "color" && {
+              background: currentStory.background.value,
             }),
-            ...(currentStory.backgroundImage && {
-              backgroundImage: `url(${currentStory.backgroundImage})`,
+            ...(currentStory.background.type === "image" && {
+              backgroundImage: `url(${currentStory.background.value})`,
             }),
           }}
         >
@@ -84,11 +84,11 @@ export const StoryEditor = () => {
             height={BASE_HEIGHT}
           >
             <Layer>
-              {currentStory.texts.map((t) => (
+              {currentStory.components.texts?.map((t) => (
                 <Group
                   key={t.id}
-                  x={t.x}
-                  y={t.y}
+                  x={t.position.x}
+                  y={t.position.y}
                   draggable
                   onDragEnd={(e) => {
                     const { x, y } = e.currentTarget.getAbsolutePosition();
@@ -97,9 +97,12 @@ export const StoryEditor = () => {
                         index === activeStoryIndex
                           ? {
                               ...story,
-                              texts: story.texts.map((text) =>
-                                text.id === t.id ? { ...text, x, y } : text,
-                              ),
+                              components: {
+                                ...story.components,
+                                texts: story.components.texts?.map((text) =>
+                                  text.id === t.id ? { ...text, x, y } : text,
+                                ),
+                              },
                             }
                           : story,
                       ),
@@ -166,7 +169,7 @@ export const StoryEditor = () => {
                 onClick={handleCyclePreset}
                 className={cn(
                   "p-2 rounded-md",
-                  currentStory.texts.find((t) => t.id === editingId)
+                  currentStory.components.texts?.find((t) => t.id === editingId)
                     ?.background !== "transparent" && "outline outline-black ",
                 )}
               >
