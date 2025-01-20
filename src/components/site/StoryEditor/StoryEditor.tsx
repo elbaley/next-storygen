@@ -100,7 +100,9 @@ export const StoryEditor = () => {
                               components: {
                                 ...story.components,
                                 texts: story.components.texts?.map((text) =>
-                                  text.id === t.id ? { ...text, x, y } : text,
+                                  text.id === t.id
+                                    ? { ...text, position: { x, y } }
+                                    : text,
                                 ),
                               },
                             }
@@ -133,7 +135,7 @@ export const StoryEditor = () => {
       <div className="flex justify-center items-center pt-4 gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <button className="bg-purple-100  hover:bg-purple-200 p-4 rounded-sm ">
+            <button className="hover:bg-orange-200 p-4 rounded-sm shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)]">
               <Menu size={16} />
             </button>
           </PopoverTrigger>
