@@ -11,8 +11,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useStoryEditor } from "./useStoryEditor";
+import { StoryNavigation } from "./_components/StoryNavigation";
 
 export const StoryEditor = () => {
   const {
@@ -35,32 +36,7 @@ export const StoryEditor = () => {
 
   return (
     <div className="w-full pt-4">
-      <div className="w-full flex items-center gap-4 justify-center">
-        {/* Sidebar for story selection */}
-        <div>
-          <ScrollArea className="h-64 w-12">
-            <div className="space-y-2">
-              {stories.map((story, index) => (
-                <button
-                  key={story.id}
-                  onClick={() => setActiveStoryIndex(index)}
-                  className={cn(
-                    "w-12 h-12 border text-center shrink-0",
-                    activeStoryIndex === index ? "bg-blue-200" : "bg-gray-100",
-                  )}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
-          </ScrollArea>
-          <button
-            onClick={handleAddStory}
-            className="w-12 h-12 bg-green-100 mt-4 hover:bg-green-200"
-          >
-            +
-          </button>
-        </div>
+      <div className="w-full flex items-center gap-4 justify-center pb-4">
         <div
           className="bg-cover relative border border-black"
           style={{
@@ -132,16 +108,22 @@ export const StoryEditor = () => {
           </Stage>
         </div>
       </div>
+      <StoryNavigation
+        handleAddStory={handleAddStory}
+        activeStoryIndex={activeStoryIndex}
+        setActiveStoryIndex={setActiveStoryIndex}
+        stories={stories}
+      />
       <div className="flex justify-center items-center pt-4 gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <button className="hover:bg-orange-200 p-4 rounded-sm shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)]">
+            <button className="hover:bg-orange-200 p-4 rounded-sm shadow-borderShadow">
               <Menu size={16} />
             </button>
           </PopoverTrigger>
           <PopoverContent
             side="top"
-            className="bg-white rounded-sm p-2 ml-4 mb-2 shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)]"
+            className="bg-white rounded-sm p-2 ml-4 mb-2 shadow-borderShadow"
           >
             <span className="text-sm">Background</span>
             <div className="flex gap-2">
@@ -157,7 +139,7 @@ export const StoryEditor = () => {
 
         {/* Toolbar */}
         <div className="flex justify-center gap-4 items-center">
-          <div className="py-2 px-3  shadow-[0_0_0.931px_0_rgba(0,0,0,0.17),0_0_3.127px_0_rgba(0,0,0,0.08),0_7px_14px_0_rgba(0,0,0,0.05)] rounded-lg min-w-96 flex gap-2">
+          <div className="py-2 px-3  shadow-borderShadow rounded-lg min-w-96 flex gap-2">
             <button
               disabled={editingId !== null}
               onClick={handleAddText}
