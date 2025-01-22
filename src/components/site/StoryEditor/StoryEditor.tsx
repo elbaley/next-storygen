@@ -13,6 +13,15 @@ import {
 } from "@/components/ui/popover";
 import { useStoryEditor } from "./useStoryEditor";
 import { StoryNavigation } from "./_components/StoryNavigation";
+import { GradientPreset } from "./StoryEditor.types";
+
+export const GRADIENT_PRESETS = {
+  classic: "bg-gradient-to-b from-[#833ab4] via-[#fd1d1d] to-[#fcb045]",
+  skyline: "bg-gradient-to-b from-[#1488CC] to-[#2B32B2]",
+  cherry: "bg-gradient-to-b from-[#EB3349] to-[#F45C43]",
+  vibrant: "bg-gradient-to-r from-[#ff7e5f] to-[#feb47b]",
+  green: "bg-gradient-to-b from-[#051937] via-[#004d7a] to-[#008793]",
+} as const;
 
 export const StoryEditor = () => {
   const {
@@ -27,6 +36,7 @@ export const StoryEditor = () => {
     handleAddStory,
     handleCyclePreset,
     handleShuffleBackground,
+    applyGradientPreset,
     handleAddText,
     handleEditText,
     handleUpdateText,
@@ -35,9 +45,13 @@ export const StoryEditor = () => {
 
   return (
     <div className="w-full pt-4">
-      <div className="w-full flex items-center gap-4 justify-center pb-4">
+      <div className="w-full flex items-center gap-4 justify-center">
         <div
-          className="bg-cover relative border border-black"
+          className={cn(
+            "bg-cover relative drop-shadow-md borde border-black",
+            currentStory.background.type === "gradient" &&
+              GRADIENT_PRESETS[currentStory.background.value],
+          )}
           style={{
             width: `${BASE_WIDTH}px`,
             height: `${BASE_HEIGHT}px`,
@@ -91,7 +105,7 @@ export const StoryEditor = () => {
                     <Text
                       text={t.text}
                       fontFamily="Inter"
-                      fontVariant="bold"
+                      fontStyle="bold"
                       padding={6}
                       shadowBlur={t.background !== "transparent" ? 0 : 0}
                       fontSize={t.fontSize}
@@ -113,7 +127,7 @@ export const StoryEditor = () => {
         setActiveStoryIndex={setActiveStoryIndex}
         stories={stories}
       />
-      <div className="flex justify-center items-center pt-4 gap-2">
+      <div className="flex justify-center items-center pt-2 gap-2">
         <Popover>
           <PopoverTrigger asChild>
             <button className="hover:bg-orange-200 p-4 rounded-sm shadow-borderShadow">
@@ -122,10 +136,24 @@ export const StoryEditor = () => {
           </PopoverTrigger>
           <PopoverContent
             side="top"
-            className="bg-white rounded-sm p-2 ml-4 mb-2 shadow-borderShadow"
+            className="bg-white rounded-sm p-2 ml-4 mb-2 shadow-borderShadow max-w-56 "
           >
             <span className="text-sm">Background</span>
             <div className="flex gap-2">
+              {Object.keys(GRADIENT_PRESETS).map((preset) => {
+                return (
+                  <button
+                    key={preset}
+                    onClick={() => {
+                      applyGradientPreset(preset as GradientPreset);
+                    }}
+                    className={cn(
+                      "flex justify-center items-center h-6 aspect-square rounded-sm border hover:opacity-70",
+                      GRADIENT_PRESETS[preset as GradientPreset],
+                    )}
+                  />
+                );
+              })}
               <button
                 onClick={handleShuffleBackground}
                 className="flex justify-center items-center h-6 aspect-square rounded-sm border hover:opacity-70"

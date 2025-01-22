@@ -2,34 +2,45 @@
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import { useState, useRef } from "react";
 import { nanoid } from "nanoid";
-import { Story, StoryText } from "./StoryEditor.types";
+import { GradientPreset, Story, StoryText } from "./StoryEditor.types";
 
 export const useStoryEditor = () => {
   const [stories, setStories] = useState<Story[]>([
     {
       id: "1",
       background: {
-        type: "image",
-        value: "https://picsum.photos/id/721/1080/1920?blur=10",
+        type: "gradient",
+        value: "classic",
       },
       components: {
         texts: [
           {
             id: "1",
-            text: "Hello World",
+            text: "storygen:",
             position: {
-              x: 0,
-              y: 0,
+              x: 100,
+              y: 100,
             },
             fontSize: 24,
             background: "black",
             color: "white",
           },
           {
-            id: "2",
-            text: "Story 1 Text",
+            id: "2a",
+            text: "1) Create stories🎨🖌️ \n\n2) Publish easily 📤",
             position: {
-              x: 100,
+              x: 40,
+              y: 140,
+            },
+            fontSize: 24,
+            background: "black",
+            color: "white",
+          },
+          {
+            id: "3",
+            text: "Add New story  ↴",
+            position: {
+              x: 140,
               y: BASE_HEIGHT - 35,
             },
             fontSize: 18,
@@ -51,8 +62,8 @@ export const useStoryEditor = () => {
       {
         id: nanoid(19),
         background: {
-          type: "image",
-          value: "https://picsum.photos/id/721/1080/1920?blur=10",
+          type: "gradient",
+          value: "classic",
         },
         components: {},
       },
@@ -139,6 +150,22 @@ export const useStoryEditor = () => {
     };
   };
 
+  const applyGradientPreset = (preset: GradientPreset) => {
+    setStories((prevStories) => {
+      return prevStories.map((story, index) => {
+        if (index === activeStoryIndex) {
+          return {
+            ...story,
+            background: {
+              type: "gradient",
+              value: preset,
+            },
+          };
+        }
+        return story;
+      });
+    });
+  };
   const handleAddText = () => {
     const id = nanoid(19);
     const newText: StoryText = {
@@ -252,5 +279,6 @@ export const useStoryEditor = () => {
     handleEditText,
     handleUpdateText,
     handleDeleteText,
+    applyGradientPreset,
   };
 };
