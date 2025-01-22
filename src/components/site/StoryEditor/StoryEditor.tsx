@@ -130,7 +130,7 @@ export const StoryEditor = () => {
       <div className="flex justify-center items-center pt-2 gap-2">
         <Popover>
           <PopoverTrigger asChild>
-            <button className="hover:bg-orange-200 p-4 rounded-sm shadow-borderShadow">
+            <button className="bg-white hover:bg-orange-200 p-4 rounded-sm shadow-borderShadow">
               <Menu size={16} />
             </button>
           </PopoverTrigger>
@@ -165,7 +165,7 @@ export const StoryEditor = () => {
         </Popover>
 
         {/* Toolbar */}
-        <div className="flex justify-center gap-4 items-center">
+        <div className="flex bg-white justify-center gap-4 items-center">
           <div className="py-2 px-3  shadow-borderShadow rounded-lg min-w-96 flex gap-2">
             <button
               disabled={editingId !== null}
