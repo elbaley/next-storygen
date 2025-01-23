@@ -41,6 +41,7 @@ export const StoryEditor = () => {
     handleEditText,
     handleUpdateText,
     handleDeleteText,
+    handleDeleteStory,
   } = useStoryEditor();
 
   return (
@@ -123,6 +124,7 @@ export const StoryEditor = () => {
       </div>
       <StoryNavigation
         handleAddStory={handleAddStory}
+        handleDeleteStory={handleDeleteStory}
         activeStoryIndex={activeStoryIndex}
         setActiveStoryIndex={setActiveStoryIndex}
         stories={stories}

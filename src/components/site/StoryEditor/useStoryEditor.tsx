@@ -3,8 +3,11 @@ import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import { useState, useRef } from "react";
 import { nanoid } from "nanoid";
 import { GradientPreset, Story, StoryText } from "./StoryEditor.types";
+import { useToast } from "@/hooks/use-toast";
 
 export const useStoryEditor = () => {
+  const { toast } = useToast();
+
   const [stories, setStories] = useState<Story[]>([
     {
       id: "1",
@@ -263,6 +266,41 @@ export const useStoryEditor = () => {
     }
   };
 
+  const handleDeleteStory = (id: string) => {
+    if (stories.length === 1) {
+      toast({
+        title: "Error",
+        type: "background",
+        description: "You cannot delete the last story.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const storyIndexToDelete = stories.findIndex((story) => story.id === id);
+
+    if (storyIndexToDelete === -1) {
+      console.warn("Story not found!");
+      return;
+    }
+
+    let newActiveStoryIndex = activeStoryIndex;
+    if (storyIndexToDelete === activeStoryIndex) {
+      if (activeStoryIndex > 0) {
+        newActiveStoryIndex = activeStoryIndex - 1;
+      } else {
+        newActiveStoryIndex = 0;
+      }
+    } else if (storyIndexToDelete < activeStoryIndex) {
+      newActiveStoryIndex = activeStoryIndex - 1;
+    }
+
+    setStories((prevStories) =>
+      prevStories.filter((_, index) => index !== storyIndexToDelete),
+    );
+    setActiveStoryIndex(newActiveStoryIndex);
+  };
+
   return {
     stories,
     setStories,
@@ -280,5 +318,6 @@ export const useStoryEditor = () => {
     handleUpdateText,
     handleDeleteText,
     applyGradientPreset,
+    handleDeleteStory,
   };
 };
