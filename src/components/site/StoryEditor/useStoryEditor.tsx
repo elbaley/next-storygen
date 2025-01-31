@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { nanoid } from "nanoid";
 import { GradientPreset, Story, StoryText } from "./StoryEditor.types";
 import { useToast } from "@/hooks/use-toast";
+import { createStory } from "@/app/actions/createStory";
 
 export const useStoryEditor = () => {
   const { toast } = useToast();
@@ -301,6 +302,13 @@ export const useStoryEditor = () => {
     setActiveStoryIndex(newActiveStoryIndex);
   };
 
+  const publishStory = async () => {
+    const res = await createStory(stories);
+    if (res.id) {
+      console.log(res.id);
+    }
+  };
+
   return {
     stories,
     setStories,
@@ -319,5 +327,6 @@ export const useStoryEditor = () => {
     handleDeleteText,
     applyGradientPreset,
     handleDeleteStory,
+    publishStory,
   };
 };

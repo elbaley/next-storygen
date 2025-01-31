@@ -6,8 +6,8 @@
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   width: 320px;
+  height: 569px;
   aspect-ratio: 320 / 569;
-  overflow: hidden;
 }
 
 .custom-pagination-container {
@@ -36,20 +36,16 @@
   background-color: white;
 }
 
-@media (min-width: 380px) {
+@media (min-width: 360px) {
   #swiper-container {
-    width: 380px;
+    width: 360px;
+    height: 640px;
   }
 }
 
 @media (min-width: 450px) {
   #swiper-container {
     width: 450px;
-  }
-}
-
-@media (min-width: 543) {
-  #swiper-container {
-    width: 543px;
+    height: 800px;
   }
 }

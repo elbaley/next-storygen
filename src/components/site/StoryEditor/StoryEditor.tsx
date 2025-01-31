@@ -53,6 +53,7 @@ export const StoryEditor = () => {
     handleUpdateText,
     handleDeleteText,
     handleDeleteStory,
+    publishStory,
   } = useStoryEditor();
 
   return (
@@ -170,7 +171,13 @@ export const StoryEditor = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Publish</AlertDialogAction>
+                    <AlertDialogAction
+                      onClick={async () => {
+                        await publishStory();
+                      }}
+                    >
+                      Publish
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
