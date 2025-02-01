@@ -43,6 +43,13 @@
   }
 }
 
+@media (min-width: 370px) {
+  #swiper-container {
+    width: 370px;
+    height: 658px;
+  }
+}
+
 @media (min-width: 450px) {
   #swiper-container {
     width: 450px;

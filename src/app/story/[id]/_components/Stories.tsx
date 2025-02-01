@@ -6,7 +6,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./swiper.css";
-import { Pagination } from "swiper/modules";
+import "swiper/css/effect-cube";
+import { Pagination, EffectCube } from "swiper/modules";
 import { PrevNextTapAreas } from "./PrevNextTapAreas";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import {
@@ -50,7 +51,14 @@ export const Stories = ({ stories }: StoriesProps) => {
           },
         }}
         slidesPerView={1}
-        modules={[Pagination]}
+        effect={"cube"}
+        cubeEffect={{
+          shadow: true,
+          slideShadows: true,
+          shadowOffset: 20,
+          shadowScale: 0.94,
+        }}
+        modules={[Pagination, EffectCube]}
         onSlideChange={() => console.log("slide change")}
       >
         <div
