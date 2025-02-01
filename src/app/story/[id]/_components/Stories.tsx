@@ -1,23 +1,38 @@
-import { useRef } from "react";
+"use client";
+import { useEffect, useRef, useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./swiper.css";
-import { Pagination } from "swiper/modules";
+import "swiper/css/effect-cube";
+import { Pagination, EffectCube } from "swiper/modules";
 import { PrevNextTapAreas } from "./PrevNextTapAreas";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
 import {
   type Position,
   type Story,
 } from "@/components/site/StoryEditor/StoryEditor.types";
+import { cn } from "@/lib/utils";
+import { GRADIENT_PRESETS } from "@/components/site/StoryEditor/StoryEditor";
 
 type StoriesProps = {
   stories: Story[];
 };
 export const Stories = ({ stories }: StoriesProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [containerDimensions, setContainerDimensions] = useState({
+    width: BASE_WIDTH,
+    height: BASE_HEIGHT,
+  });
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { clientWidth, clientHeight } = containerRef.current;
+      setContainerDimensions({ width: clientWidth, height: clientHeight });
+    }
+  }, []);
 
   return (
     <div
@@ -36,7 +51,14 @@ export const Stories = ({ stories }: StoriesProps) => {
           },
         }}
         slidesPerView={1}
-        modules={[Pagination]}
+        effect={"cube"}
+        cubeEffect={{
+          shadow: true,
+          slideShadows: true,
+          shadowOffset: 20,
+          shadowScale: 0.94,
+        }}
+        modules={[Pagination, EffectCube]}
         onSlideChange={() => console.log("slide change")}
       >
         <div
@@ -52,14 +74,18 @@ export const Stories = ({ stories }: StoriesProps) => {
               ...(story.background.type === "image" && {
                 backgroundImage: `url('${story.background.value}')`,
               }),
-              ...(story.background.type !== "image" && {
-                background: `white`,
-              }),
+              // ...(story.background.type !== "image" && {
+              //   background: `white`,
+              // }),
             }}
-            className={`text-foreground isolate relative !bg-cover`}
+            className={cn(
+              "text-foreground isolate relative !bg-cover",
+              story.background.type === "gradient" &&
+                GRADIENT_PRESETS[story.background.value],
+            )}
           >
             <PrevNextTapAreas />
-            <div className="slider-container p-4 [&_>*]z-[9] h-full mt-8 relative">
+            <div className="slider-container bg-red-500/10  [&_>*]z-[9] h-full  relative">
               {/* Render Text Components */}
               {story.components.texts?.map((text) => {
                 const {
@@ -70,20 +96,23 @@ export const Stories = ({ stories }: StoriesProps) => {
                   background,
                   color,
                 } = text;
+
+                const scaleFactor = containerDimensions.width / BASE_WIDTH;
                 const { top, left } = calculatePosition(
                   position,
-                  containerRef.current?.clientWidth ?? BASE_WIDTH,
-                  containerRef.current?.clientHeight ?? BASE_HEIGHT,
+                  containerDimensions.width,
+                  containerDimensions.height,
                 );
 
                 return (
                   <span
                     key={id}
+                    className="px-1 font-bold leading-[30px] rounded-sm p-[4px] whitespace-break-spaces"
                     style={{
                       position: "absolute",
                       top,
                       left,
-                      fontSize,
+                      fontSize: `${fontSize * scaleFactor}px`,
                       backgroundColor: background,
                       color,
                     }}

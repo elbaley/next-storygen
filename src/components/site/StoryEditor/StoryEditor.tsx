@@ -2,29 +2,13 @@
 
 import { Stage, Layer, Text, Group, Label, Tag } from "react-konva";
 import { BASE_HEIGHT, BASE_WIDTH } from "@/constants";
-import { Baseline, LucideShuffle, Menu, Save, Trash, Type } from "lucide-react";
+import { Baseline, Save, Trash, Type } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useStoryEditor } from "./useStoryEditor";
 import { StoryNavigation } from "./_components/StoryNavigation";
-import { GradientPreset } from "./StoryEditor.types";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { StoryActionsMenu } from "./_components/StoryActionsMenu";
 
 export const GRADIENT_PRESETS = {
   classic: "bg-gradient-to-b from-[#833ab4] via-[#fd1d1d] to-[#fcb045]",
@@ -53,6 +37,7 @@ export const StoryEditor = () => {
     handleUpdateText,
     handleDeleteText,
     handleDeleteStory,
+    publishStory,
   } = useStoryEditor();
 
   return (
@@ -141,67 +126,11 @@ export const StoryEditor = () => {
         stories={stories}
       />
       <div className="flex justify-center items-center pt-2 gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="bg-white hover:bg-orange-200 p-4 rounded-sm shadow-borderShadow">
-              <Menu size={16} />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="top"
-            className="bg-white rounded-sm p-2 ml-4 mb-2 shadow-borderShadow max-w-56 "
-          >
-            <div className="flex flex-col gap-2 pb-2">
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <div className="flex gap-2 items-center hover:bg-orange-200 px-2 rounded-sm py-1">
-                    <Save strokeWidth={1.5} size={16} />
-                    <span className="text-sm">Publish</span>
-                  </div>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to publish this story?
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Publish</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-            <Separator orientation="horizontal" />
-            <span className="text-xs">Story background</span>
-            <div className="flex gap-2">
-              {Object.keys(GRADIENT_PRESETS).map((preset) => {
-                return (
-                  <button
-                    key={preset}
-                    onClick={() => {
-                      applyGradientPreset(preset as GradientPreset);
-                    }}
-                    className={cn(
-                      "flex justify-center items-center h-6 aspect-square rounded-sm border hover:opacity-70",
-                      GRADIENT_PRESETS[preset as GradientPreset],
-                    )}
-                  />
-                );
-              })}
-              <button
-                onClick={handleShuffleBackground}
-                className="flex justify-center items-center h-6 aspect-square rounded-sm border hover:opacity-70"
-              >
-                <LucideShuffle size={16} strokeWidth={1.5} />
-              </button>
-            </div>
-          </PopoverContent>
-        </Popover>
-
+        <StoryActionsMenu
+          publishStory={publishStory}
+          handleShuffleBackground={handleShuffleBackground}
+          applyGradientPreset={applyGradientPreset}
+        />
         {/* Toolbar */}
         <div className="flex bg-white justify-center gap-4 items-center">
           <div className="py-2 px-3  shadow-borderShadow rounded-lg min-w-96 flex gap-2">

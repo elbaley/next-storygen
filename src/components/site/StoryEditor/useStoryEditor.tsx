@@ -4,6 +4,9 @@ import { useState, useRef } from "react";
 import { nanoid } from "nanoid";
 import { GradientPreset, Story, StoryText } from "./StoryEditor.types";
 import { useToast } from "@/hooks/use-toast";
+import { createStory } from "@/app/actions/createStory";
+import { ToastAction } from "@/components/ui/toast";
+import { env } from "@/env";
 
 export const useStoryEditor = () => {
   const { toast } = useToast();
@@ -301,6 +304,49 @@ export const useStoryEditor = () => {
     setActiveStoryIndex(newActiveStoryIndex);
   };
 
+  const publishStory = async () => {
+    if (stories.length < 2) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "You cannot publish a story with less than 2 slides.",
+      });
+      return;
+    }
+
+    try {
+      const res = await createStory(stories);
+      if (res.id) {
+        toast({
+          variant: "default",
+          title: "Published successfully ✅",
+          description: "Your story has been published.",
+          action: (
+            <ToastAction
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  `${env.NEXT_PUBLIC_SITE_URL}/story/${res.id}`,
+                );
+              }}
+              altText="Copy Link"
+            >
+              Copy Link
+            </ToastAction>
+          ),
+          duration: 30000,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+
+        description: "Something went wrong.",
+      });
+    }
+  };
+
   return {
     stories,
     setStories,
@@ -319,5 +365,6 @@ export const useStoryEditor = () => {
     handleDeleteText,
     applyGradientPreset,
     handleDeleteStory,
+    publishStory,
   };
 };
