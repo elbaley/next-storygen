@@ -4,6 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     CF_WORKER_URL: z.string().min(1),
+    CF_WORKER_SECRET: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),
